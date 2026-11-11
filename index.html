@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#171421">
+
+  <title>Dungeon Card Draw</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 25px 16px;
+      font-family: Georgia, serif;
+      color: #f5e9ce;
+      background: radial-gradient(ellipse at top, #393047 0%, #171421 65%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+      margin: auto;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin: 15px 0 8px;
+      color: #e8bd72;
+      text-shadow: 0 2px 12px #000;
+    }
+
+    .subtitle {
+      color: #b9ad9b;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    .cards-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 30px auto;
+    }
+
+    .card {
+      width: 230px;
+      height: 320px;
+      border-radius: 16px;
+      padding: 10px;
+      background: linear-gradient(145deg, #c49a59, #6d482c);
+      box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.55),
+        inset 0 0 0 2px #e5c58d;
+      display: flex;
+      flex-shrink: 0;
+    }
+
+    .card-inner {
+      flex: 1;
+      border: 2px solid #c49a59;
+      border-radius: 10px;
+      background: radial-gradient(circle at center, #403348, #211b2b 75%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 12px;
+    }
+
+    .card-top,
+    .card-bottom {
+      color: #d7b778;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .card-icon {
+      font-size: 3.5rem;
+      filter: drop-shadow(0 5px 8px #000);
+    }
+
+    .card-title {
+      font-size: 1.35rem;
+      line-height: 1.4;
+      color: #f5e9ce;
+      text-shadow: 0 3px 5px #000;
+      padding: 0 5px;
+    }
+
+    .card-back {
+      background: repeating-linear-gradient(
+        45deg,
+        #34283e,
+        #34283e 10px,
+        #403149 10px,
+        #403149 20px
+      );
+    }
+
+    .card-back .card-inner {
+      border: 3px double #d7b778;
+    }
+
+    .card-back .card-icon {
+      font-size: 4rem;
+    }
+
+    .card-back .card-title {
+      font-size: 1rem;
+      letter-spacing: 2px;
+      color: #d7b778;
+    }
+
+    .revealing {
+      animation: reveal 0.7s ease both;
+    }
+
+    @keyframes reveal {
+      0% {
+        transform: rotateY(90deg) scale(0.85);
+        opacity: 0;
+      }
+
+      100% {
+        transform: rotateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .counter {
+      margin: 22px 0;
+      color: #b9ad9b;
+      font-size: 0.95rem;
+    }
+
+    .counter strong {
+      color: #e8bd72;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 350px;
+      margin: 25px auto;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 17px 20px;
+      font-family: Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .draw-button {
+      background: linear-gradient(135deg, #e8bd72, #b47a38);
+      color: #211b2b;
+      box-shadow: 0 5px 15px #0006;
+    }
+
+    .draw-button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .reset-button {
+      background: transparent;
+      border: 1px solid #8d795f;
+      color: #cbbda7;
+      font-size: 0.95rem;
+    }
+
+    .message {
+      min-height: 24px;
+      margin-top: 15px;
+      color: #e8bd72;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 600px) {
+      .cards-area {
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .card {
+        width: min(280px, 85vw);
+        height: 300px;
+      }
+
+      .card-icon {
+        font-size: 3.5rem;
+      }
+
+      .card-title {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <h1>Il Mazzo delle Meraviglie di Mr.Bubble</h1>
+
+    <div class="cards-area" id="cardsArea">
+
+      <div class="card card-back">
+        <div class="card-inner">
+          <div class="card-top">Scommesse del Giorno</div>
+          <div class="card-icon">⚔️</div>
+          <div class="card-title">?</div>
+          <div class="card-bottom">✦ ✦ ✦</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="buttons">
+
+      <button
+        class="draw-button"
+        id="drawButton"
+        onclick="drawCards()"
+      >
+        Pesca 3 carte
+      </button>
+
+      <button
+        class="reset-button"
+        onclick="resetDeck()"
+      >
+        ↻ Rimescola il mazzo
+      </button>
+
+    </div>
+
+    <div class="message" id="message">
+      Il mazzo è pronto!
+    </div>
+
+  </main>
+
+  <script>
+
+    const cards = [
+      {
+        title: "Uccidi 5 mostri",
+        icon: "💀"
+      },
+      {
+        title: "Esplora 3 stanze",
+        icon: "🚪"
+      },
+      {
+        title: "Primo sangue",
+        icon: "🩸"
+      },
+      {
+        title: "Risolvi un indovinello",
+        icon: "🧩"
+      },
+      {
+        title: "Mappa più stanze degli altri",
+        icon: "🗺️"
+      }
+    ];
+
+    const cardsArea = document.getElementById("cardsArea");
+    const drawButton = document.getElementById("drawButton");
+    const messageElement = document.getElementById("message");
+
+    let deck = [];
+    let drawnCards = [];
+
+    // Shuffle cards randomly
+
+    function shuffle(array) {
+      const shuffled = [...array];
+
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [shuffled[i], shuffled[j]] =
+          [shuffled[j], shuffled[i]];
+      }
+
+      return shuffled;
+    }
+
+    // Draw three different cards simultaneously
+
+    function drawCards() {
+
+      if (drawnCards.length > 0) return;
+
+      deck = shuffle(cards);
+
+      drawnCards = deck.splice(0, 3);
+
+      cardsArea.innerHTML = "";
+
+      drawnCards.forEach((card, index) => {
+
+        const cardElement = document.createElement("div");
+
+        cardElement.className = "card revealing";
+
+        cardElement.style.animationDelay = `${index * 0.2}s`;
+
+        cardElement.innerHTML = `
+          <div class="card-inner">
+            <div class="card-top">Scommessa del Giorno</div>
+            <div class="card-icon">${card.icon}</div>
+            <div class="card-title">${card.title}</div>
+            <div class="card-bottom">✦ ✦ ✦</div>
+          </div>
+        `;
+
+        cardsArea.appendChild(cardElement);
+
+      });
+
+      drawButton.disabled = true;
+
+      messageElement.textContent =
+        "Hai pescato 3 carte! Buona avventura!";
+
+    }
+
+    // Reset and prepare a new round
+
+    function resetDeck() {
+
+      deck = shuffle(cards);
+      drawnCards = [];
+
+      cardsArea.innerHTML = `
+        <div class="card card-back">
+          <div class="card-inner">
+            <div class="card-top">Scommesse del Giorno</div>
+            <div class="card-icon">⚔️</div>
+            <div class="card-title">PESCA UNA CARTA</div>
+            <div class="card-bottom">✦ ✦ ✦</div>
+          </div>
+        </div>
+      `;
+
+      drawButton.disabled = false;
+
+      messageElement.textContent =
+        "Il mazzo è pronto!";
+
+    }
+
+    // Initialize
+
+    resetDeck();
+
+  </script>
+
+</body>
+</html>
